@@ -12,12 +12,12 @@ governing permissions and limitations under the License.
 
 import {
     html,
-    LitElement,
+    SpectrumElement,
     CSSResultArray,
     TemplateResult,
     property,
     PropertyValues,
-} from 'lit-element';
+} from '@spectrum-web-components/base';
 
 import '@spectrum-web-components/button/sp-clear-button.js';
 
@@ -26,7 +26,7 @@ import styles from './tag.css.js';
 /**
  * @element sp-tags
  */
-export class Tag extends LitElement {
+export class Tag extends SpectrumElement {
     public static get styles(): CSSResultArray {
         return [styles];
     }
@@ -36,6 +36,14 @@ export class Tag extends LitElement {
 
     @property({ type: Boolean, reflect: true })
     public disabled = false;
+
+    private get hasIcon(): boolean {
+        return !!this.querySelector('[slot="icon"]');
+    }
+
+    private get hasAvatar(): boolean {
+        return !!this.querySelector('[slot="avatar"]');
+    }
 
     constructor() {
         super();
@@ -77,9 +85,23 @@ export class Tag extends LitElement {
     }
 
     protected render(): TemplateResult {
+        const slots = [];
+        if (this.hasAvatar) {
+            slots.push(
+                html`
+                    <slot name="avatar"></slot>
+                `
+            );
+        }
+        if (this.hasIcon) {
+            slots.push(
+                html`
+                    <slot name="icon"></slot>
+                `
+            );
+        }
         return html`
-            <slot name="avatar"></slot>
-            <slot name="icon"></slot>
+            ${slots}
             <span class="label"><slot></slot></span>
             ${this.deletable
                 ? html`
